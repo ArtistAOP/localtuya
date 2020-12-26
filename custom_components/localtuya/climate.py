@@ -80,7 +80,7 @@ class LocaltuyaClimate(LocalTuyaEntity, ClimateEntity):
         **kwargs,
     ):
         """Initialize a new LocaltuyaClimate."""
-        super().__init__(device, config_entry, switchid, **kwargs)
+        super().__init__(device, config_entry, switchid, _LOGGER, **kwargs)
         self._state = None
         self._target_temperature = None
         self._current_temperature = None
@@ -155,7 +155,7 @@ class LocaltuyaClimate(LocalTuyaEntity, ClimateEntity):
         """Set new target temperature."""
         if ATTR_TEMPERATURE in kwargs and self.has_config(CONF_TARGET_TEMPERATURE_DP):
             temperature = round(kwargs[ATTR_TEMPERATURE] / self._precision)
-            self._device.set_dps(temperature, self._config[CONF_TARGET_TEMPERATURE_DP])
+            await self._device.set_dp(temperature, self._config[CONF_TARGET_TEMPERATURE_DP])
 
     def set_fan_mode(self, fan_mode):
         """Set new target fan mode."""
@@ -164,9 +164,9 @@ class LocaltuyaClimate(LocalTuyaEntity, ClimateEntity):
     async def async_set_hvac_mode(self, hvac_mode):
         """Set new target operation mode."""
         on_off = hvac_mode != HVAC_MODE_OFF
-        self._device.set_dps(on_off, self._dps_id)
+        await self._device.set_dp(on_off, self._dp_id)
         if self.has_config(CONF_HVAC_MODE_DP):
-            self._device.set_dps(hvac_mode, self._config[CONF_HVAC_MODE_DP])
+            await self._device.set_dp(hvac_mode, self._config[CONF_HVAC_MODE_DP])
 
     @property
     def min_temp(self):
@@ -184,7 +184,7 @@ class LocaltuyaClimate(LocalTuyaEntity, ClimateEntity):
 
     def status_updated(self):
         """Device status was updated."""
-        self._state = self.dps(self._dps_id)
+        self._state = self.dps(self._dp_id)
 
         if self.has_config(CONF_TARGET_TEMPERATURE_DP):
             self._target_temperature = (
