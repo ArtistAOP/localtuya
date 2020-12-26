@@ -165,8 +165,8 @@ class LocaltuyaClimate(LocalTuyaEntity, ClimateEntity):
         """Set new target operation mode."""
         on_off = hvac_mode != HVAC_MODE_OFF
         await self._device.set_dp(on_off, self._dp_id)
-        if self.has_config(CONF_HVAC_MODE_DP):
-            await self._device.set_dp(hvac_mode, self._config[CONF_HVAC_MODE_DP])
+        if on_off and self.has_config(CONF_HVAC_MODE_DP):
+            await self._device.set_dp('0' if hvac_mode == HVAC_MODE_AUTO else '1', self._config[CONF_HVAC_MODE_DP])
 
     @property
     def min_temp(self):
@@ -196,16 +196,13 @@ class LocaltuyaClimate(LocalTuyaEntity, ClimateEntity):
                 self.dps_conf(CONF_CURRENT_TEMPERATURE_DP) * self._precision
             )
 
-        hvac_mode = HVAC_MODE_OFF
-        if self.has_config(CONF_HVAC_MODE_DP):
-            hvac_mode = self.dps_conf(CONF_HVAC_MODE_DP)
-
         if self._state is False:
             self._hvac_mode = HVAC_MODE_OFF
-        elif hvac_mode == HVAC_MODE_AUTO:
-            self._hvac_mode = HVAC_MODE_AUTO
         else:
-            self._hvac_mode = HVAC_MODE_HEAT
+            if self.has_config(CONF_HVAC_MODE_DP):
+                self._hvac_mode = HVAC_MODE_AUTO if self.dps_conf(CONF_HVAC_MODE_DP) == '0' else HVAC_MODE_HEAT
+            else:
+                self._hvac_mode = HVAC_MODE_HEAT
 
 
 async_setup_entry = partial(async_setup_entry, DOMAIN, LocaltuyaClimate, flow_schema)
