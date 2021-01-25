@@ -124,7 +124,7 @@ class LocaltuyaClimate(LocalTuyaEntity, ClimateEntity):
     @property
     def hvac_modes(self):
         """Return the list of available operation modes."""
-        return {HVAC_MODE_OFF, HVAC_MODE_AUTO, HVAC_MODE_HEAT}
+        return [HVAC_MODE_OFF, HVAC_MODE_AUTO, HVAC_MODE_HEAT]
 
     @property
     def current_temperature(self):
