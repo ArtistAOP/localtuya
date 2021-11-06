@@ -1,7 +1,8 @@
 {
   "domain": "localtuya",
-  "name": "LocalTuya integration",
-  "documentation": "https://github.com/rospogrigio/localtuya/",
+  "name": "LocalTuya integration (w/ climate-1.1.2)",
+  "version": "3.2.3",
+  "documentation": "https://github.com/ArtistAOP/localtuya/",
   "dependencies": [],
   "codeowners": [
     "@rospogrigio", "@postlund"
